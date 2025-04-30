@@ -1,0 +1,106 @@
+# Thailand Travel Itinerary System: Features & Tools
+
+## MCP Tools Overview
+
+The MCP (Multi-modal Conversational Pipeline) server provides a conversational interface to interact with the travel itinerary system. Below are the available tools and their functions:
+
+### 1. get_itineraries
+**Purpose**: Retrieve travel itineraries based on user preferences
+**Parameters**:
+- `nights`: Number of nights for the trip (1-14)
+- `region`: Destination region (Phuket or Krabi)
+- `interests`: List of activity types (ADVENTURE, CULTURAL, etc.)
+**Function**: Queries the database for matching itineraries and returns summarized information with pricing in both USD and Rupees.
+
+### 2. get_itinerary_details
+**Purpose**: Retrieve comprehensive information about a specific itinerary
+**Parameters**:
+- `itinerary_id`: The unique identifier of the itinerary
+**Function**: Fetches complete details including day-by-day activities, accommodations, transfers, and pricing. Formats all prices in both USD and Rupees.
+
+### 3. generate_custom_itinerary
+**Purpose**: Create a personalized AI-generated itinerary based on user preferences
+**Parameters**:
+- `nights`: Number of nights for the trip (1-14)
+- `region`: Destination region (Phuket, Krabi, or Both)
+- `interests`: List of preferred activity types
+- `budget`: Budget level (Budget, Standard, or Luxury)
+- `special_requests`: Additional text-based requirements
+**Function**: Generates a detailed custom itinerary by either calling an AI-generation endpoint or composing one from existing database elements. Handles failures gracefully.
+
+### 4. quick_recommendation
+**Purpose**: Provide an instant recommendation based on minimal input
+**Parameters**:
+- `nights`: Number of nights for the trip
+**Function**: Returns a single best-match itinerary with highlights. Offers a simpler, faster alternative to detailed searches.
+
+### 5. send_feedback
+**Purpose**: Collect user ratings and comments on itineraries
+**Parameters**:
+- `itinerary_id`: The unique identifier of the itinerary
+- `rating`: Numerical rating (1-5 stars)
+- `comments`: Optional text feedback
+**Function**: Submits feedback to the backend for storage and processing.
+
+## Application Flow Chart
+
+```
+┌───────────────┐     ┌───────────────┐     ┌───────────────┐
+│   User Query  │────►│  MCP Server   │────►│ FastAPI Server│
+└───────────────┘     └───────┬───────┘     └───────┬───────┘
+                             │                     │
+                             ▼                     ▼
+┌───────────────┐     ┌───────────────┐     ┌───────────────┐
+│  Formatted    │◄────│  Tool Handler │◄────│  Database     │
+│  Response     │     │  & Processor  │     │  Operations   │
+└───────────────┘     └───────────────┘     └───────────────┘
+```
+
+## Detailed Flow Description
+
+1. **User Input Processing**:
+   - User provides a natural language query
+   - MCP server parses the query and identifies intent
+   - The appropriate tool is selected based on intent
+
+2. **Tool Execution**:
+   - Tool parameters are extracted from the query
+   - The tool constructs an API call to the FastAPI backend
+   - Error handling ensures graceful failure
+
+3. **Backend Processing**:
+   - FastAPI server receives the request
+   - Database queries retrieve relevant information
+   - Data is processed and structured for response
+
+4. **Response Formatting**:
+   - MCP formats the API response into user-friendly text
+   - Prices are converted and displayed in both USD and Rupees
+   - Error messages are presented in a helpful manner
+
+5. **Currency Conversion**:
+   - All monetary values are processed through a currency converter
+   - USD amounts are multiplied by the USD_TO_RUPEE rate (83.5)
+   - Both values are displayed with appropriate currency symbols
+
+## Error Handling
+
+The MCP tools implement robust error handling:
+
+1. **Missing Parameters**: Provides helpful error messages for missing required fields
+2. **API Connection Issues**: Detects and reports server connectivity problems
+3. **Data Format Problems**: Safely handles malformed data with fallback options
+4. **Empty Results**: Returns user-friendly messages when no matches are found
+
+## Development and Extension
+
+The tool system is designed for extensibility:
+
+1. **Adding New Tools**:
+   - Define a new tool in the `list_tools()` handler
+   - Implement the tool's logic in the `call_tool()` handler
+   - Register it with appropriate parameters and schema
+
+2. **Custom Prompts**:
+   - Use the `list_prompts()` and `get_prompt()` handlers
+   - Support pre-defined query templates for common use cases 

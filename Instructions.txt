@@ -1,0 +1,127 @@
+# Thailand Travel Itinerary System: Setup & Usage Guide
+
+## Overview
+This system provides a comprehensive travel planning solution for Thailand, focusing on Phuket and Krabi regions. It includes a FastAPI backend server and an MCP (Multi-modal Conversational Pipeline) client that offers various itinerary-related tools.
+
+## System Features
+- Search itineraries based on nights, regions, and interests
+- Get detailed itinerary information including activities and accommodations
+- Generate custom AI-created itineraries
+- Provide quick recommendations
+- Send feedback on itineraries
+- Display pricing in both USD and Rupees (₹)
+
+## Setup Instructions
+
+### Step 1: Install Dependencies
+First, make sure you have Python installed (Python 3.8+ recommended). Then install the required packages:
+
+```bash
+# Install backend dependencies
+pip install fastapi==0.105.0 uvicorn==0.24.0 sqlalchemy==2.0.25 pydantic==2.5.3 pydantic-settings==2.1.0 python-multipart python-jose python-dotenv
+
+# Install MCP client
+cd mcp/travel_itenaries
+pip install -e .
+cd ../..
+```
+
+### Step 2: Set Up the Backend
+
+The backend server (FastAPI) handles all the data management and API endpoints:
+
+```bash
+# Run the backend server
+python run.py
+```
+
+This will start the backend server at http://0.0.0.0:8000. The server provides various endpoints for itinerary management.
+
+### Step 3: Run the MCP Client
+
+The MCP client provides a conversational interface to interact with the travel itinerary system:
+
+```bash
+# Start the MCP client
+cd mcp
+python -m mcp.bootstrap.bootstrap
+
+# From mcp shell, run the travel itineraries tool
+app travel_itineraries
+```
+
+## Using the System
+
+### Sample Queries
+
+Here are some example queries you can use with the MCP client:
+
+1. **Basic search**:
+   "Find itineraries for 5 nights in Phuket"
+
+2. **Interest-based search**:
+   "Find me ADVENTURE and CULTURAL itineraries for 4 nights"
+
+3. **Get itinerary details**:
+   "Show details for itinerary ID 4"
+
+4. **Create custom itinerary**:
+   "Create a custom 7-night itinerary in Krabi with RELAXATION and NATURE activities"
+
+5. **Quick recommendation**:
+   "Give me a quick recommendation for a 3-night trip"
+
+### Available Tools
+
+The system provides these main tools:
+
+- `get_itineraries`: Search for itineraries based on nights, region and interests
+- `get_itinerary_details`: Get detailed information about a specific itinerary
+- `generate_custom_itinerary`: Generate a personalized itinerary based on preferences
+- `quick_recommendation`: Get a simple recommendation based on nights
+- `send_feedback`: Provide ratings and comments on itineraries
+
+### Interest Categories
+
+You can filter itineraries by these interests:
+- ADVENTURE
+- CULTURAL
+- RELAXATION
+- NATURE
+- NIGHTLIFE
+- FAMILY
+- ROMANTIC
+- SHOPPING
+
+## Troubleshooting
+
+If you encounter any issues:
+
+1. **Backend server not starting**:
+   - Check if port 8000 is available
+   - Ensure all dependencies are installed
+   - Verify database file exists (travel_itinerary.db)
+
+2. **MCP client connection issues**:
+   - Verify backend server is running
+   - Check API_BASE_URL in server.py (should be "http://localhost:8000/api")
+
+3. **Missing data in responses**:
+   - The system has robust error handling to deal with incomplete data
+   - If this persists, try reseeding the database with `python reset_db.py`
+
+## Currency Display
+
+All prices are displayed in both USD ($) and Indian Rupees (₹) for convenience.
+
+## Development Notes
+
+The system structure is as follows:
+- `app/`: Contains the FastAPI backend code
+- `mcp/`: Contains the MCP client code
+- `run.py`: Main entry point to run the backend server
+- `reset_db.py`: Script to reset the database
+
+For customization, you can modify:
+- Exchange rates: Update USD_TO_RUPEE value in server.py
+- API endpoints: Check API_BASE_URL in server.py
